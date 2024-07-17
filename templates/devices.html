@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Devices</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+        }
+        .table {
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Connected Devices</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices %}
+                <tr>
+                    <td>{{ device['=address'] }}</td>
+                    <td>{{ device['=mac-address'] }}</td>
+                    <td>{{ device.status }}</td>
+                    <td>
+                        <button class="btn btn-danger mr-2" onclick="blockMac('{{ device['=mac-address'] }}')">Block</button>
+                        <button class="btn btn-success" onclick="unblockMac('{{ device['=mac-address'] }}')">Unblock</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function blockMac(mac) {
+        $.ajax({
+            url: '/block',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({mac: mac}),
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(response) {
+                alert(response.responseJSON.error);
+            }
+        });
+    }
+
+    function unblockMac(mac) {
+        $.ajax({
+            url: '/unblock',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({mac: mac}),
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(response) {
+                alert(response.responseJSON.error);
+            }
+        });
+    }
+</script>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
